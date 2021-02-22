@@ -1,0 +1,88 @@
+.bg{
+    background: url('../img/login_bg.png') no-repeat;
+    width: 100%;
+    height: 100%;
+    background-size: 110%;
+}
+
+.transparent {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+
+.form-container {
+    position: absolute;
+    top: 15vh;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px #000;
+    opacity: 0.7;
+}
+
+.form-container:hover {
+    opacity: 1;
+}
+
+.form-control:focus {
+    border-color: #3f413f;
+    box-shadow: 0 0 0 0.2rem rgba(39, 41, 39, 0.25);
+} 
+
+.full-height {
+    height: 100%;
+}
+
+.div-block {
+    display: inline-block;
+}
+
+.logo-img {
+    height: 10%;
+    width: 25%;
+}
+
+.color-green {
+    color: lime;
+}
+
+.color-white{
+    color: white;
+}
+
+.color-red{
+    color: red;
+}
+
+.delete-paddings {
+    padding-left : 0em;
+    padding-right: 0em;
+}
+
+.song-title {
+    font-size: 3em;
+    color: white;
+    font-family: fantasy;
+}
+.song-author {
+    font-size: 2em;
+    color: white;
+    font-family: fantasy;
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.video{
+    height: 15em;
+    border: white 0.5em solid;
+}
+
+.border {
+    border: white 0.5em solid;
+}
+
+.rotate {
+    transform: rotate(-90deg);
+}
