@@ -71,11 +71,12 @@ public class Login extends HttpServlet {
             User user = DatabaseManager.getInstance().getUser(email, password);
             
             request.getSession().setAttribute("user", user);
-
+            request.getSession().setAttribute("logged", true);
             
             response.sendRedirect("player.jsp");
             System.out.println("Usuario válido");
         }else{
+            request.getSession().setAttribute("logged", false);
             response.sendRedirect("index.jsp");
             System.out.println("Usuario inválido");
         }

@@ -113,6 +113,12 @@ public class DatabaseManager {
     public boolean addUser(String name, String email, String password){
         session.beginTransaction();
         
+        for (User u : getUsers()){
+            if (u.getEmail().equalsIgnoreCase(email)){
+                return false;
+            }
+        }
+        
         User user = new User(name, email, password);
         
         Playlist playlist = new Playlist("Todas", user);
@@ -143,6 +149,8 @@ public class DatabaseManager {
 
             transaction.commit();
         }catch (RuntimeException e){
+            System.out.println("No se ha creado la playlist");
+            e.printStackTrace();
             transaction.rollback();
             return false;
         }
@@ -187,18 +195,16 @@ public class DatabaseManager {
      * @param songName
      * @return 
      */
-    public boolean deleteSongFromPlaylist(int playListId, String songName){
+    public boolean deleteSongFromPlaylist(int playListId, int songId){
         Transaction transaction = null;
         try{
             transaction = session.beginTransaction();
             Playlist playlist = (Playlist) session.get(Playlist.class, playListId);
+            Song song = (Song) session.get(Song.class, songId);
             
-            for (Song s : playlist.getSongs()){
-                if (s.getTitle().equalsIgnoreCase(songName)){
-                    playlist.getSongs().remove(s);
-                    s.getPlaylists().remove(playlist);
-                }
-            }
+            playlist.getSongs().remove(song);
+            song.getPlaylists().remove(playlist);
+           
             if (playlist.getSongs().isEmpty()){
                 activeUser.getPlaylists().remove(playlist);
                 session.delete(playlist);

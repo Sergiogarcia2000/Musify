@@ -18,23 +18,34 @@
     
     <%
         User user = (User) request.getSession().getAttribute("user");
-        Set<Playlist> playLists = user.getPlaylists();
-        System.out.println("asddassadasas" + playLists.size());
+
+        if (user == null){
+    %>
+            <section class="container-fluid transparent">
+                <section class="row justify-content-center text-center">
+                    <h1 class="col-12 color-white">¡Tienes que iniciar sesion!</h1>
+                    <a class="col-2 text-center btn btn-danger" href="./index.jsp">Iniciar sesión</a>
+                </section>
+            </section>
+    <%
+        }else{
+
+            Set<Playlist> playLists = user.getPlaylists();
     %>
     
-    <section class="container-fluid transparent">
-        <section class="row justify-content-center">
+    <section class="container-fluid transparent h-100">
+        <section class="row d-flex justify-content-center h-100">
 
-            <section class="col-8 border">
+            <section class="col-8 h-100 border">
 
                 <div class="col-12">
-                    <div class="row m-5">
+                    <div class="row">
                         <img src="./img/logo.png" class="center logo-img">
                     </div>
 
-                    <div class="row m-5 div-block d-flex justify-content-center">
+                    <div class="row div-block d-flex justify-content-center">
                         <div class="col center text-center center">
-                            <video id="videoPlayer" loop="true" src="./Music.mp4" autostart="false" class="video rounded"></video>
+                            <video id="videoPlayer" loop="true" src="./Music.mp4" autostart="false" class="video mt-2 rounded"></video>
                             <h1 id="songName" class="song-title"></h1>
                             <h2 id="artistName" class="song-author"></h2>
                         </div>
@@ -57,34 +68,31 @@
                             <input id="songRange" type="range" class="col-7 form-control-range delete-paddings" min="0" max="100" value="0">
                             <p id="songDuration" class="col-3 text-white text-left">0:00</p>
                         </div>
+                        <div class="col-12 d-flex justify-content-center text-center"> 
+                            <h2 class="color-white"><%=user.getUsername()%></h2>
+                        </div>
+                        <div class="col-12 d-flex justify-content-center text-center"> 
+                            <a class="col-4 btn btn-danger" href="PlaylistManager?action=logout">Cerrar sesión</a>
+                        </div>
                     </div>
                 </div>
 
             </section>
-            <section class="col-4 border">
-                <div class="col-12 overflow-auto">
+            <section class="col-4 h-100 border scroll">
+                <div class="col-12">
                     <div class="row d-flex justify-content-center m-3">
                         <button class="col-1 btn btn-dark" data-toggle="modal" data-target="#uploadSongModal" data-whatever="@mdo"> <i class="color-white fas fa-music"></i> </button>
                         <select id="playListSelect" onchange="changePlaylist(this.options[this.selectedIndex].value)" class="col-10 custom-select"></select>
                         <button class="col-1 btn btn-dark" data-toggle="modal" data-target="#createPlaylistModal"> <i class="color-white fas fa-plus"></i> </button>
                     </div>
-                    <div class="row" id="songsList">
-                        <div class="col-1 dropdown">
-                            <button class="btn btn-dark mt-1 dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#"><i class="fas fa-angle-double-up mr-1 "></i>Mover arriba</a>
-                                <a class="dropdown-item" href="#"><i class="fas fa-plus mr-1"></i>Añadir a playlist</a>
-                                <a class="dropdown-item" href="#"><i class="fas fa-trash mr-1"></i>Eliminar</a>
-                            </div>
-                        </div>
-                        <button class="col-10 btn btn-dark text-center m-1 color-white" value="2" onclick="playSong(this.value)">Prueba</button>
+                    <div class="row " id="songsList">
                     </div>
                 </div>
             </section>
         </section>
     </section>
 
-      <div class="modal fade" id="uploadSongModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="uploadSongModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -185,7 +193,7 @@
                  <form method="post" action="${pageContext.request.contextPath}/PlaylistManager">
                         <div class="form-group">
                             <input name="finality" type="hidden" value="deleteSong">
-                            <input name="modal_song_id" type="hidden">
+                            <input name="modal_song_id" id="modal_song_id" type="hidden">
                             <input name="modal_playlist_id" id="modal_playlist_id" type="hidden">
                             <input name="finality" type="hidden" value="deleteSong">
                             <label for="modal_delete_song_name" class="col-form-label">Nombre de la canción:</label>
@@ -202,7 +210,6 @@
             </div>
         </div>
     </div>
-
     <script>
         var videoPlayer = document.getElementById("videoPlayer");
         var playButton = document.getElementById("playButton");
@@ -287,12 +294,6 @@
                 songsList.innerHTML += songHTML;
                 counter++;
             });
-            if (audio == null){
-                changeSongStatus();
-            }else{
-                playSong(0);
-                changeSongStatus();
-            }
         }
 
         function deleteSong(song){
@@ -305,6 +306,7 @@
                 songName.value = playLists[activeList].songs[parseInt(song,10)].title;
                 playlistName.value = playLists[activeList].name;
                 playlistId.value =  playLists[activeList].id;
+                songId.value =  playLists[activeList].songs[parseInt(song,10)].id;
             }else{
                 songName.value = "No se puede eliminar esta canción";
                 playlistName.value = "No se puede eliminar de esta playlist";
@@ -489,6 +491,7 @@
             return mins + ':' + secs;
         }
     </script>
+    <% } %>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>

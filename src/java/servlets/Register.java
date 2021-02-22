@@ -79,18 +79,22 @@ public class Register extends HttpServlet {
         String username = request.getParameter("username_input");
         String password = request.getParameter("password_input");
         String confirmPassword = request.getParameter("confirm_password_input");
-        String rememberCheckbox = request.getParameter("remember_checkbox");
-        
-        
-       
         
         if (password.equalsIgnoreCase(confirmPassword)){
+            request.getSession().removeAttribute("registered");
+            if (DatabaseManager.getInstance().addUser(username, email, password)){
+                response.sendRedirect("index.jsp");
+            }else{
+                request.getSession().setAttribute("emailinuse", true);
+                response.sendRedirect("register.jsp");
+            }
+        }else{
             
-            System.out.println("Holaaaa");
-            DatabaseManager.getInstance().addUser(username, email, password);
+            request.getSession().setAttribute("registered", false);
+            response.sendRedirect("register.jsp");
         }
         
-         response.sendRedirect("index.jsp");
+         
     }
 
     /**

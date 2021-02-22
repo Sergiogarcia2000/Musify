@@ -10,33 +10,44 @@
     <title>MUSIFY - LOGIN</title>
 </head>
     <body class="alert-dark bg">
-        <section class="container-fluid">
-            <section class="row justify-content-center">
-                <section class="col-12 col-sm-6 col-md-3">
-                    <form class="form-container" action="${pageContext.request.contextPath}/Player" method="POST">
-                        <div class="form-group">
-                            <label for="email_input">Email</label>
-                            <input type="text" class="form-control" name="email_input">
-                        </div>
-                        <div class="form-group">
-                            <label for="password_input">Contraseña</label>
-                            <input type="password" class="form-control" name="password_input">
-                        </div>
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" name="remember_checkbox">
-                            <label class="form-check-label" for="remember_checkbox">¿Recordar usuario?</label>
-                        </div>
-                        <div class="form-group">
-                            <input class="btn btn-outline-dark btn-block" type="submit" value="Entrar" name="login_button">
-                            <a class="btn btn-outline-dark btn-block" href="./register.jsp" name="register_button">Registrarse</a>
-                        </div>
-                    </form>
+
+        <section class="container-fluid text-center">
+            <section class="row">
+                <section class="col-12 ">
+                    <img src="./img/logo.png" class="">
+                </section>
+                <section class="col-12 d-flex justify-content-center ">
+                        <form class="form-container" action="${pageContext.request.contextPath}/Player" method="POST">
+                            <div class="form-group">
+                                <label for="email_input">Email</label>
+                                <input type="text" class="form-control" name="email_input">
+                            </div>
+                            <div class="form-group">
+                                <label for="password_input">Contraseña</label>
+                                <input type="password" class="form-control" name="password_input">
+                            </div>
+                            <div class="form-group">
+                                <input class="btn btn-outline-dark btn-block" type="submit" value="Entrar" name="login_button">
+                                <a class="btn btn-outline-dark btn-block" href="./register.jsp" name="register_button">Registrarse</a>
+                            </div>
+                        </form>
                 </section>  
             </section>
         </section>
-
+        
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        <% 
+            Boolean b = (Boolean) request.getSession().getAttribute("logged");
+
+            if (b != null){
+                if (!b){
+                    %> 
+                    <script>window.alert("Credenciales inválidas");</script>
+                    <%
+                }
+            }
+        %>
     </body>
 </html>

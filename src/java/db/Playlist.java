@@ -30,7 +30,7 @@ public class Playlist implements Serializable{
     private String playlistName;
     
 
-    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name="PLAYLIST_SONG", 
             joinColumns = {@JoinColumn(name="PLAYLIST_FK")}, 

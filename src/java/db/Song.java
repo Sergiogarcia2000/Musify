@@ -35,7 +35,7 @@ public class Song implements Serializable{
     private String source;
     
     @ManyToMany(mappedBy = "songs",
-            cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+            cascade = {CascadeType.ALL})
     private Set<Playlist> playlists = new HashSet();
 
     public Song(){

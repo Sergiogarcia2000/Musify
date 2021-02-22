@@ -47,7 +47,16 @@ public class PlaylistManager extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
+        if (request.getParameter("action") != null){
+            if (request.getParameter("action").equals("logout")){
+                
+                request.getSession().removeAttribute("user");
+                response.sendRedirect("index.jsp");
+                return;
+            }
+        }
+        
     }
 
     /**
@@ -69,10 +78,9 @@ public class PlaylistManager extends HttpServlet {
             DatabaseManager.getInstance().addPlaylist(playlistName);
             System.out.println("Playlist creada!");
         }else if (finality.equals("deleteSong")){
-            String songName = request.getParameter("modal_delete_song_name");
+            String songId = request.getParameter("modal_song_id");
             String playlistId = request.getParameter("modal_playlist_id");
-            System.out.println("asd: " + playlistId);
-            DatabaseManager.getInstance().deleteSongFromPlaylist(Integer.parseInt(playlistId), songName);
+            DatabaseManager.getInstance().deleteSongFromPlaylist(Integer.parseInt(playlistId), Integer.parseInt(songId));
         }else{
             String songName = request.getParameter("modal_song_name");
             String playlist = request.getParameter("modal_playlist_select");
