@@ -5,8 +5,6 @@
  */
 package db;
 
-import java.sql.Date;
-import java.util.HashSet;
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -61,7 +59,6 @@ public class DatabaseManager {
                 }
             }
         }
-        
         return false;
     }
     
@@ -83,56 +80,68 @@ public class DatabaseManager {
     
     private List<User> getUsers(){
         Query query = session.createQuery("SELECT u FROM User u");
-        
-        
-        
         return query.list();
     }
     
     private List<Song> getSongs(){
         Query query = session.createQuery("Select s FROM Song s");
-        
         return query.list();
     }
     
     public boolean addSong(Song song){
-        session.beginTransaction();
+        Transaction transaction = null;
         
-        for (User u : this.getUsers()){
-            for (Playlist p : u.getPlaylists()){
-                if (p.getPlaylistName().equalsIgnoreCase("Todas")){
-                    p.getSongs().add(song); 
+        try{
+            transaction = session.beginTransaction();
+        
+            for (User u : this.getUsers()){
+                for (Playlist p : u.getPlaylists()){
+                    if (p.getPlaylistName().equalsIgnoreCase("Todas")){
+                        p.getSongs().add(song); 
+                    }
                 }
+                session.update(u);
             }
-            session.update(u);
+
+            transaction.commit();
+        }catch (RuntimeException e){
+            System.out.println("No se ha añadido la canción");
+            e.printStackTrace();
+            transaction.rollback();
+            return false;
         }
-        session.getTransaction().commit();
         return true;
     }
     
     public boolean addUser(String name, String email, String password){
-        session.beginTransaction();
+        Transaction transaction = null;
         
-        for (User u : getUsers()){
-            if (u.getEmail().equalsIgnoreCase(email)){
-                return false;
+        try{
+            transaction = session.beginTransaction();
+        
+            for (User u : getUsers()){
+                if (u.getEmail().equalsIgnoreCase(email)){
+                    return false;
+                }
             }
+        
+            User user = new User(name, email, password);
+        
+            Playlist playlist = new Playlist("Todas", user);
+        
+            for (Song s : getSongs()){
+                playlist.getSongs().add(s);
+            }
+        
+            user.getPlaylists().add(playlist);
+            session.save(user);
+            transaction.commit();
+        }catch (RuntimeException e){
+            System.out.println("No se ha añadido el usuario");
+            e.printStackTrace();
+            transaction.rollback();
+            return false;
         }
-        
-        User user = new User(name, email, password);
-        
-        Playlist playlist = new Playlist("Todas", user);
-        
-        for (Song s : getSongs()){
-            playlist.getSongs().add(s);
-        }
-        
-        user.getPlaylists().add(playlist);
-        
-        System.out.println(user.getUserId());
-        
-        session.save(user);
-        session.getTransaction().commit();
         return true;
     }
     
@@ -179,6 +188,7 @@ public class DatabaseManager {
             session.save(playlist);
             transaction.commit();
         }catch (RuntimeException e){
+            e.printStackTrace();
             transaction.rollback();
             return false;
         }
@@ -218,26 +228,5 @@ public class DatabaseManager {
             return false;
         }
         return true;
-    }
-    
-    public static void main(String[] args){
-        /*
-        SessionFactory sessionFactory;
-        Configuration configuration = new Configuration();
-
-        configuration.configure();
-
-        ServiceRegistry serviceRegistry = new ServiceRegistryBuilder().applySettings(configuration.getProperties()).buildServiceRegistry();
-
-        sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-
-        Session sesion = sessionFactory.openSession();
-        
-        sesion.beginTransaction();
-        
-        sesion.getTransaction().commit();
-        sesion.close();
-        sessionFactory.close();
-        */
     }
 }

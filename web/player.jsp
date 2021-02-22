@@ -352,7 +352,7 @@
             playLists[activeList].songs.sort(() => Math.random() - 0.5);
             playSong(0);
             changePlaylist(activeList);
-            
+            changeSongStatus();
         }
 
         function queueUp(song){
@@ -366,17 +366,13 @@
 
                     }else{
                         let second = (parseInt(activeSong, 10) + 1);
-                        console.log("a" +second);
-                        console.log("b" + song);
                         playLists[activeList].songs[second].id = (parseInt(song,10) + 1).toString();
-                        playLists[activeList].songs[song].id = (parseInt(activeSong,10) + 2).toString();
+                        playLists[activeList].songs[song].id = (parseInt(activeSong,10) + 1).toString();
                     }
 
                     playLists[activeList].songs.sort(function(a, b) {
                     return a.id - b.id;
                     });
-                    console.log("new array");
-                    console.log(playLists[activeList].songs);
                     changePlaylist(activeList);
                     changeSongStatus();
             }else{
