@@ -65,7 +65,6 @@ public class Login extends HttpServlet {
         
         String email = request.getParameter("email_input");
         String password = request.getParameter("password_input");
-        System.out.println(email + " - " + password);
         if (DatabaseManager.getInstance().checkUser(email, password)) {
             
             User user = DatabaseManager.getInstance().getUser(email, password);
@@ -74,10 +73,13 @@ public class Login extends HttpServlet {
             request.getSession().setAttribute("logged", true);
             
             response.sendRedirect("player.jsp");
-            System.out.println("Usuario válido");
         }else{
-            request.getSession().setAttribute("logged", false);
-            response.sendRedirect("index.jsp");
+            response.setContentType("text/html; charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            out.println("<script>");
+            out.println("alert('Usuario o contraseña incorrectos');");
+            out.println("window.location.replace('index.jsp');");
+            out.println("</script>");
             System.out.println("Usuario inválido");
         }
         

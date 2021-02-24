@@ -32,7 +32,6 @@ public class DatabaseManager {
     
     public DatabaseManager() {
         configuration = new Configuration();
-
         configuration.configure();
         serviceRegistry = new ServiceRegistryBuilder().applySettings(configuration.getProperties()).buildServiceRegistry();
         sessionFactory = configuration.buildSessionFactory(serviceRegistry);
@@ -105,7 +104,6 @@ public class DatabaseManager {
 
             transaction.commit();
         }catch (RuntimeException e){
-            System.out.println("No se ha añadido la canción");
             e.printStackTrace();
             transaction.rollback();
             return false;
@@ -121,6 +119,7 @@ public class DatabaseManager {
         
             for (User u : getUsers()){
                 if (u.getEmail().equalsIgnoreCase(email)){
+                    transaction.commit();
                     return false;
                 }
             }
@@ -137,7 +136,6 @@ public class DatabaseManager {
             session.save(user);
             transaction.commit();
         }catch (RuntimeException e){
-            System.out.println("No se ha añadido el usuario");
             e.printStackTrace();
             transaction.rollback();
             return false;
@@ -158,7 +156,6 @@ public class DatabaseManager {
 
             transaction.commit();
         }catch (RuntimeException e){
-            System.out.println("No se ha creado la playlist");
             e.printStackTrace();
             transaction.rollback();
             return false;

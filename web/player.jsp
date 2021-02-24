@@ -172,7 +172,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-                            <input type="submit" class="btn btn-primary" value="Aceptar">
+                            <input type="submit" id="add_button_modal" class="btn btn-primary" value="Aceptar">
                         </div>
                     </form>
                 </div>
@@ -250,12 +250,10 @@
 
 
         songRange.addEventListener('change', function() {
-            console.log(this.value);
             audio.currentTime =  (audio.duration * this.value) / 100;
         });
 
         volumeRange.addEventListener('change', function() {
-            console.log(this.value);
             audio.volume = this.value / 100;
         });
 
@@ -266,15 +264,21 @@
             songName.value = playLists[activeList].songs[value].title;
             
             var counter = 0;
-            playLists.forEach( element => {
-                if (element.name != playLists[activeList].name){
-                    var option = document.createElement("option");
-                    option.setAttribute("value", element.id);
-                    option.innerHTML = element.name;
-                    playlistsSelect.appendChild(option);
-                }
-                counter++;
-            });
+            if (playLists.length <= 1){
+                window.alert("No tienes ninguna playlist!")
+                let btn = document.getElementById("add_button_modal")
+                btn.setAttribute("disabled","true")
+            }else{
+                playLists.forEach( element => {
+                    if (element.name != playLists[activeList].name && element.name != playLists[0].name){
+                        var option = document.createElement("option");
+                        option.setAttribute("value", element.id);
+                        option.innerHTML = element.name;
+                        playlistsSelect.appendChild(option);
+                    }
+                    counter++;
+                });
+            }
         }
 
         function changePlaylist(value){
@@ -294,6 +298,7 @@
                 songsList.innerHTML += songHTML;
                 counter++;
             });
+            
         }
 
         function deleteSong(song){
@@ -356,22 +361,12 @@
         }
 
         function queueUp(song){
-
-            if (song != activeSong && song != activeSong+1){
-
-                    if (activeSong == playLists[activeList].songs.length - 1){
-
-                       playLists[activeList].songs[0].id = song
-                       playLists[activeList].songs[song].id = 0;
-
-                    }else{
-                        let second = (parseInt(activeSong, 10) + 1);
-                        playLists[activeList].songs[second].id = (parseInt(song,10) + 1).toString();
-                        playLists[activeList].songs[song].id = (parseInt(activeSong,10) + 1).toString();
-                    }
+            if (song != activeSong && song != getNextIndex()){
+                    playLists[activeList].songs[getNextIndex()].id = (parseInt(song,10) + 1).toString();
+                    playLists[activeList].songs[song].id = (parseInt(getNextIndex(),10) + 1).toString();
 
                     playLists[activeList].songs.sort(function(a, b) {
-                    return a.id - b.id;
+                        return a.id - b.id;
                     });
                     changePlaylist(activeList);
                     changeSongStatus();
@@ -380,9 +375,16 @@
             }
         }
 
+        function getNextIndex(){
+            let index = parseInt(activeSong, 10)+1;
+            if (activeSong == playLists[activeList].songs.length - 1){
+                index = 0
+            }
+            return index;
+        }
+
         function playSong(song){
             audio.pause();
-            console.log("cancion: " + song);
 
             let songInList = document.getElementById("song" + (activeSong));
             songInList.className = "col-11 btn btn-dark text-center mt-1 color-white";
@@ -395,6 +397,7 @@
             songName.innerHTML = playLists[activeList].songs[activeSong].title;
             artistName.innerHTML = playLists[activeList].songs[activeSong].artist;
             audio = new Audio(playLists[activeList].songs[activeSong].source);
+            replayButton.className = "fas fa-redo-alt";
             audio.volume = volumeRange.value / 100;
             togglePlay();
         }

@@ -81,20 +81,24 @@ public class Register extends HttpServlet {
         String confirmPassword = request.getParameter("confirm_password_input");
         
         if (password.equalsIgnoreCase(confirmPassword)){
-            request.getSession().removeAttribute("registered");
             if (DatabaseManager.getInstance().addUser(username, email, password)){
                 response.sendRedirect("index.jsp");
             }else{
-                request.getSession().setAttribute("emailinuse", true);
-                response.sendRedirect("register.jsp");
+                response.setContentType("text/html; charset=UTF-8");
+                PrintWriter out = response.getWriter();
+                out.println("<script>");
+                out.println("alert('El email introducido ya está en uso');");
+                out.println("window.location.replace('register.jsp');");
+                out.println("</script>");
             }
         }else{
-            
-            request.getSession().setAttribute("registered", false);
-            response.sendRedirect("register.jsp");
-        }
-        
-         
+            response.setContentType("text/html; charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            out.println("<script>");
+            out.println("alert('Las contraseñas no coinciden');");
+            out.println("window.location.replace('register.jsp');");
+            out.println("</script>");
+        } 
     }
 
     /**
